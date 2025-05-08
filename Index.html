@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сюрприз!</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #ffebee;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+        
+        #heart {
+            position: absolute;
+            font-size: 60px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            user-select: none;
+        }
+        
+        #heart:hover {
+            transform: scale(1.1);
+        }
+        
+        #counter {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 18px;
+            color: #d32f2f;
+        }
+        
+        #message {
+            position: absolute;
+            font-size: 40px;
+            color: #d32f2f;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 1s;
+            z-index: 10;
+        }
+        
+        .explosion {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #ff5722;
+            pointer-events: none;
+            animation: explode 1s forwards;
+        }
+        
+        @keyframes explode {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(20);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="counter">Нажатий: 0/20</div>
+    <div id="heart">❤️</div>
+    <div id="message">С Днём Рождения! Моя любимая мамочка Ира)
+    <br> 🌺🌸🌼🎂🎉</br> </div>
+
+    <script>
+        const heart = document.getElementById('heart');
+        const counter = document.getElementById('counter');
+        const message = document.getElementById('message');
+        let clicks = 0;
+        
+        // Начальная позиция сердца
+        positionHeart();
+        
+        heart.addEventListener('click', function() {
+            clicks++;
+            counter.textContent = `Нажатий: ${clicks}/20`;
+            
+            if (clicks >= 20) {
+                explodeHeart();
+                showMessage();
+            } else {
+                positionHeart();
+            }
+        });
+        
+        function positionHeart() {
+            // Случайная позиция в пределах видимой области
+            const maxX = window.innerWidth - 100;
+            const maxY = window.innerHeight - 100;
+            
+            const randomX = Math.floor(Math.random() * maxX);
+            const randomY = Math.floor(Math.random() * maxY);
+            
+            heart.style.left = `${randomX}px`;
+            heart.style.top = `${randomY}px`;
+        }
+        
+        function explodeHeart() {
+            // Удаляем сердце
+            heart.style.display = 'none';
+            
+            // Создаем эффект взрыва
+            for (let i = 0; i < 50; i++) {
+                createParticle();
+            }
+        }
+        
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'explosion';
+            
+            // Позиция частицы - последнее положение сердца
+            const heartRect = heart.getBoundingClientRect();
+            const x = heartRect.left + heartRect.width / 2;
+            const y = heartRect.top + heartRect.height / 2;
+            
+            particle.style.left = `${x}px`;
+            particle.style.top = `${y}px`;
+            
+            // Случайный цвет
+            const colors = ['#ff5722', '#ff9800', '#ffeb3b', '#e91e63', '#9c27b0'];
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            particle.style.backgroundColor = randomColor;
+            
+            document.body.appendChild(particle);
+            
+            // Удаляем частицу после анимации
+            setTimeout(() => {
+                particle.remove();
+            }, 1000);
+        }
+        
+        function showMessage() {
+            message.style.opacity = '1';
+            message.style.left = `${window.innerWidth / 2 - 150}px`;
+            message.style.top = `${window.innerHeight / 2 - 30}px`;
+        }
+    </script>
+</body>
+</html>
